@@ -26,6 +26,7 @@ public class FileImportService {
 	
 	public String fileImport(Path path, String fileName, byte[] bytes) {
 		List<Employee> employees = new ArrayList<>();
+		String response = "Success";
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.US_ASCII)) { 
 			String line = br.readLine();
 			 while (line != null ) {
@@ -41,6 +42,7 @@ public class FileImportService {
 							failureEmployee.setFileName(fileName);
 							failureEmployee.setFile(bytes);
 							loggingRepository.save(failureEmployee);
+							response = "Failure";
 						 }
 						
 					 }
@@ -49,7 +51,7 @@ public class FileImportService {
 					 logger.error("Error in data Uploading"+ex.getMessage());
 				 }
 			 }
-			 return "Success";
+			 return response;
 		}  catch (IOException ioe){
 			FailureEmployee failureEmployee = new FailureEmployee();
 			failureEmployee.setFileName(fileName);
