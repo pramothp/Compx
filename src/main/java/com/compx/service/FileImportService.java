@@ -38,19 +38,7 @@ public class FileImportService {
 							 employees.add(employee);
 							 employeeRepository.save(employee);
 						 } else {
-							 List<FailureEmployee> failureEmployee = loggingRepository.findByFileName(fileName);
-							 FailureEmployee femployee = new FailureEmployee();
-							 if(failureEmployee!= null && failureEmployee.size()>0) {
-								 femployee.setId(failureEmployee.get(0).getId());
-								 femployee.setFileName(fileName);
-								 femployee.setFile(bytes);
-							 } else {
-								 femployee.setFileName(fileName); 
-								 femployee.setFile(bytes);
-							 }
-							  
-							
-							loggingRepository.save(femployee);
+							saveFile(fileName, bytes); 
 							response = "Failure";
 						 }
 						
@@ -62,10 +50,7 @@ public class FileImportService {
 			 }
 			 return response;
 		}  catch (IOException ioe){
-			FailureEmployee failureEmployee = new FailureEmployee();
-			failureEmployee.setFileName(fileName);
-			failureEmployee.setFile(bytes);
-			loggingRepository.save(failureEmployee);
+			saveFile(fileName, bytes);
 			logger.error("Error in FileImport Service:"+ioe.getMessage());
 			return "Failure";
 		}
@@ -80,5 +65,19 @@ public class FileImportService {
 		employee.setPassword(data[4]);
 		employee.setAddress(data[5]);
 		return employee;
+	}
+	
+	public void saveFile(String fileName, byte[] bytes) {
+		List<FailureEmployee> failureEmployee = loggingRepository.findByFileName(fileName);
+		 FailureEmployee femployee = new FailureEmployee();
+		 if(failureEmployee!= null && failureEmployee.size()>0) {
+			 femployee.setId(failureEmployee.get(0).getId());
+			 femployee.setFileName(fileName);
+			 femployee.setFile(bytes);
+		 } else {
+			 femployee.setFileName(fileName); 
+			 femployee.setFile(bytes);
+		 }
+		 loggingRepository.save(femployee);
 	}
 }
