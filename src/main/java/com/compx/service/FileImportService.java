@@ -38,10 +38,19 @@ public class FileImportService {
 							 employees.add(employee);
 							 employeeRepository.save(employee);
 						 } else {
-							 FailureEmployee failureEmployee = new FailureEmployee();
-							failureEmployee.setFileName(fileName);
-							failureEmployee.setFile(bytes);
-							loggingRepository.save(failureEmployee);
+							 List<FailureEmployee> failureEmployee = loggingRepository.findByFileName(fileName);
+							 FailureEmployee femployee = new FailureEmployee();
+							 if(failureEmployee!= null && failureEmployee.size()>0) {
+								 femployee.setId(failureEmployee.get(0).getId());
+								 femployee.setFileName(fileName);
+								 femployee.setFile(bytes);
+							 } else {
+								 femployee.setFileName(fileName); 
+								 femployee.setFile(bytes);
+							 }
+							  
+							
+							loggingRepository.save(femployee);
 							response = "Failure";
 						 }
 						

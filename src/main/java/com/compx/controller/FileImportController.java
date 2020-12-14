@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,13 +69,14 @@ public class FileImportController {
     }
 	
     @RequestMapping(path = "/compx/download", method = RequestMethod.POST)
-    public ResponseEntity<ByteArrayResource> download(@RequestBody String param) 
+    public ResponseEntity<ByteArrayResource> download(@RequestBody String param) throws IOException 
  {
+    	List<FailureEmployee> failureEmployee = loggingRepository.findByFileName(param);
+    	Path path = Paths.get("./"+failureEmployee.get(0).getFileName());
     	try {
-    		FailureEmployee failureEmployee = loggingRepository.findByFileName(param);
-        	Path path = Paths.get("./"+failureEmployee.getFileName());
-    		Files.write( path, failureEmployee.getFile());
- 
+    		
+    		Files.write( path, failureEmployee.get(0).getFile());
+    		
             ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes
     (path));
             HttpHeaders header = new HttpHeaders();
@@ -91,6 +91,8 @@ public class FileImportController {
 
     	}catch(Exception ex) {
     		logger.error(ex.getMessage());
+    	} finally {
+    		Files.deleteIfExists(path);
     	}
     	return null;
     
