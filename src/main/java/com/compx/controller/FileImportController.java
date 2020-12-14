@@ -1,19 +1,17 @@
 package com.compx.controller;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream; 
+ 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-import javax.annotation.Resource;
+
+
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.Logger;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -31,8 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.compx.model.FailureEmployee;
 import com.compx.repository.LoggingRepository;
 import com.compx.service.FileImportService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -72,22 +69,6 @@ public class FileImportController {
     	return response;
     }
 	
-	/*
-	 * @PostMapping(value = "/compx/download") public void
-	 * filedownload(@RequestParam String filename, HttpServletResponse response) {
-	 * 
-	 * FailureEmployee failureEmployee = loggingRepository.findByFileName(filename);
-	 * try (OutputStream outStream = response.getOutputStream()){
-	 * response.setContentType("application/csv"); String headerKey =
-	 * "content-Disposition"; String headerValue =
-	 * String.format("attachment; fileName=\"%s\"", filename);
-	 * response.setHeader(headerKey, headerValue);
-	 * 
-	 * outStream.write(failureEmployee.getFile()); outStream.flush();
-	 * }catch(Exception ex) {
-	 * 
-	 * } }
-	 */    
     @RequestMapping(path = "/compx/download", method = RequestMethod.POST)
     public ResponseEntity<ByteArrayResource> download(@RequestBody String param) 
  {
@@ -95,15 +76,7 @@ public class FileImportController {
     		FailureEmployee failureEmployee = loggingRepository.findByFileName(param);
         	Path path = Paths.get("./"+failureEmployee.getFileName());
     		Files.write( path, failureEmployee.getFile());
-
-    		OutputStream os = new FileOutputStream(failureEmployee.getFileName()); 
-    		os.write(failureEmployee.getFile()); 
-        System.out.println("Successfully"
-                           + " byte inserted"); 
-
-        // Close the file 
-        os.close(); 
-
+ 
             ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes
     (path));
             HttpHeaders header = new HttpHeaders();
